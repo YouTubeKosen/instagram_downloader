@@ -94,7 +94,6 @@ async function main() {
       downloadImage(getImageUrl(), `${w.document.querySelector("[datetime]").dateTime.replace(".", "_")}`);
     }
   }
-
 }
 
 main();
