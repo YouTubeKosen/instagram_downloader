@@ -46,21 +46,21 @@ async function scanThumbnails() {
   const links = new Set();
   await waitForElement("article");
   while (w.document.querySelector("svg[aria-label='読み込み中']")) {
+    await sleep(1000);
     const thumnails = w.document.querySelector("article").querySelectorAll("a");
     for (let thumbnail of thumnails) {
       links.add(thumbnail.href);
     }
     w.window.scrollBy(0, w.document.documentElement.clientHeight);
-    await sleep(1000);
   }
   return links;
 }
 
 function getImageUrl() {
-  console.log(w.document.querySelector("img[alt*='Photo by']").alt);
+  console.log(w.document.querySelector("img[alt*='Photo ']").alt);
   let url;
-  if (w.document.querySelector("img[alt*='Photo by']").srcset) {
-    const srcset = w.document.querySelector("img[alt*='Photo by']").srcset.split(",");
+  if (w.document.querySelector("img[alt*='Photo ']").srcset) {
+    const srcset = w.document.querySelector("img[alt*='Photo ']").srcset.split(",");
     let width_max = 0, url_temp, width_temp;
     for (let src of srcset) {
       url_temp = src.split(" ")[0];
@@ -73,7 +73,7 @@ function getImageUrl() {
     }
   }
   else {
-    url = w.document.querySelector("img[alt*='Photo by']").src
+    url = w.document.querySelector("img[alt*='Photo ']").src
   }
   console.log(url);
   return url;
@@ -87,7 +87,7 @@ async function main() {
   for (let link of links.values()) {
     w.location = link;
     await new Promise(resolve => { setTimeout(resolve, 1000) }); /* sleep for HTTP ERROR 429 */
-    const imgExist = await waitForElement("img[alt*='Photo by']");
+    const imgExist = await waitForElement("img[alt*='Photo ']");
     const dateExist = await waitForElement("[datetime]");
     if (imgExist == true && dateExist == true) {
       downloadImage(getImageUrl(), `${w.document.querySelector("[datetime]").dateTime.replace(".", "_")}`);
