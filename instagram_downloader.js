@@ -1,3 +1,6 @@
+function sleep(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
 
 function downloadImage(src, filename) {
   const xhr = new XMLHttpRequest();
@@ -22,38 +25,35 @@ function saveImage() {
 }
 
 async function waitForElement(selector, timeout = 15000) {
-  let cnt = 0;
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      const el = w.document.querySelector(selector);
-      cnt += 1000;
-      if (el) {
-        clearInterval(interval);
-        resolve(true);
-      } else if (cnt > timeout) {
-        clearInterval(interval);
-        reject(false);
-      }
-    }, 1000);
-  })
+  let cnt = 0, el;
+  while (cnt < timeout) {
+    el = w.document.querySelector(selector);
+    if (el) {
+      break;
+    }
+    await sleep(1000);
+    cnt += 1000;
+  }
+
+  if (el) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 async function scanThumbnails() {
   const links = new Set();
   await waitForElement("article");
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      let thumnails = w.document.querySelector("article").querySelectorAll("a");
-      for (let thumbnail of thumnails) {
-        links.add(thumbnail.href);
-      }
-      w.window.scrollBy(0, w.document.documentElement.clientHeight);
-      if (w.document.querySelector("svg[aria-label='読み込み中']") == null) {
-        clearInterval(interval);
-        resolve(links);
-      }
-    }, 1000);
-  })
+  while (w.document.querySelector("svg[aria-label='読み込み中']")) {
+    const thumnails = w.document.querySelector("article").querySelectorAll("a");
+    for (let thumbnail of thumnails) {
+      links.add(thumbnail.href);
+    }
+    w.window.scrollBy(0, w.document.documentElement.clientHeight);
+    await sleep(1000);
+  }
+  return links;
 }
 
 function getImageUrl() {
