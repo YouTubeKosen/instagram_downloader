@@ -24,7 +24,7 @@ function saveImage() {
 async function waitForElement(selector, timeout = 15000) {
   let cnt = 0;
   return new Promise((resolve, reject) => {
-    interval = setInterval(() => {
+    const interval = setInterval(() => {
       const el = w.document.querySelector(selector);
       cnt += 1000;
       if (el) {
@@ -42,7 +42,7 @@ async function scanThumbnails() {
   const links = new Set();
   await waitForElement("article");
   return new Promise(resolve => {
-    interval = setInterval(() => {
+    const interval = setInterval(() => {
       let thumnails = w.document.querySelector("article").querySelectorAll("a");
       for (let thumbnail of thumnails) {
         links.add(thumbnail.href);
@@ -61,8 +61,7 @@ function getImageUrl() {
   let url;
   if (w.document.querySelector("img[alt*='Photo by']").srcset) {
     const srcset = w.document.querySelector("img[alt*='Photo by']").srcset.split(",");
-    let width_max = 0;
-    let url_temp, width_temp;
+    let width_max = 0, url_temp, width_temp;
     for (let src of srcset) {
       url_temp = src.split(" ")[0];
       width_temp = src.split(" ")[1];
