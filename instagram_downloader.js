@@ -44,7 +44,7 @@ async function waitForElement(selector, timeout = 15000) {
 
 async function scanThumbnails() {
   const links = new Set();
-  await waitForElement("svg[aria-label='読み込み中']", 2000);
+  await waitForElement("svg[aria-label='読み込み中']", 10000);
   while (w.document.querySelector("svg[aria-label='読み込み中']")) {
     const thumnails = w.document.querySelector("article").querySelectorAll("a");
     for (let thumbnail of thumnails) {
