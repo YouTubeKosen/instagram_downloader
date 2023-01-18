@@ -90,7 +90,7 @@ async function main() {
 
   for (let link of links.values()) {
     w.location = link;
-    await new Promise(resolve => { setTimeout(resolve, 1000) }); /* sleep for HTTP ERROR 429 */
+    await sleep(1000); /* sleep for HTTP ERROR 429 */
     const imgExist = await waitForElement("img[alt*='Photo ']");
     const dateExist = await waitForElement("[datetime]");
     if (imgExist == true && dateExist == true) {
